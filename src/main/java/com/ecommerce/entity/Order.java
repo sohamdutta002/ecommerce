@@ -12,6 +12,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import lombok.Data;
 
@@ -26,10 +28,18 @@ public class Order {
 	@JoinColumn(name = "userId")
 	private User user;
 	@OneToMany(cascade=CascadeType.ALL)
-	private List<CartItem> orderItems=new ArrayList<>();
+	private List<OrderItem> orderItems=new ArrayList<>();
 	private double totalPrice;
 	private String shippingAddress;
 	private String orderStatus;
 	private String paymentStatus;
 	private LocalDateTime orderDate=LocalDateTime.now();
+	
+	@PrePersist
+	@PreUpdate
+	void update() {
+		for(OrderItem oi:orderItems) {
+			totalPrice+=oi.getTotalPrice();
+		}
+	}
 }
