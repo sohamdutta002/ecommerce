@@ -2,9 +2,11 @@ package com.ecommerce.dto;
 
 import java.util.List;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
+@AllArgsConstructor
 public class UserDTO {
 	private Long userId;
 	private String name;

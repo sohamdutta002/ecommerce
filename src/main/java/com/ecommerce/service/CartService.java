@@ -3,9 +3,11 @@ package com.ecommerce.service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.ecommerce.dto.CartItemDTO;
 import com.ecommerce.entity.CartItem;
 import com.ecommerce.entity.Product;
 import com.ecommerce.entity.User;
@@ -26,23 +28,16 @@ public class CartService {
 		this.productRepository = productRepository;
 	}
 
-	public CartItem addToCart(Long userId, Long productId, int quantity) {
-		User user = userRepository.findById(userId).orElseThrow();
-		Product product = productRepository.findById(productId).orElseThrow();
+	public CartItemDTO addToCart(Long userId, Long productId, int quantity) {
+		User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+		Product product = productRepository.findById(productId).orElseThrow(() -> new RuntimeException("Product does not exist"));
 		CartItem cartItem = cartItemRepository.findByUserAndProduct(user, product).orElse(new CartItem());
 
 		cartItem.setProduct(product);
 		cartItem.setUser(user);
 		cartItem.setQuantity(cartItem.getQuantity() + quantity);
-		return cartItemRepository.save(cartItem);
-	}
-	
-	public CartItem updateCartItem(Long userId,Long productId,int quantity) {
-		User user = userRepository.findById(userId).orElseThrow();
-		Product product = productRepository.findById(productId).orElseThrow();
-		CartItem cartItem=cartItemRepository.findByUserAndProduct(user, product).orElseThrow();
-		cartItem.setQuantity(quantity);
-		return cartItemRepository.save(cartItem);
+		cartItemRepository.save(cartItem);
+		return new CartItemDTO(productId,product.getName(),product.getPrice(),quantity,product.getPrice()*quantity);
 	}
 
 	public void removeFromCart(Long userId, Long productId) {
@@ -58,9 +53,17 @@ public class CartService {
 		User user = userRepository.findById(userId).orElseThrow();
 		List<CartItem> cartItems = cartItemRepository.findByUser(user);
 		double total = cartItems.stream().mapToDouble(ci -> ci.getProduct().getPrice() * ci.getQuantity()).sum();
-
+		
+		List<CartItemDTO> itemDTOs=cartItems.stream()
+				.map(item->new CartItemDTO(
+						item.getProduct().getProductId(),
+						item.getProduct().getName(),
+						item.getProduct().getPrice(),
+						item.getQuantity(),
+						item.getProduct().getPrice()*item.getQuantity()
+				)).collect(Collectors.toList());
 		Map<String, Object> response = new HashMap<>();
-		response.put("items", cartItems);
+		response.put("items", itemDTOs);
 		response.put("totalPrice", total);
 		return response;
 	}

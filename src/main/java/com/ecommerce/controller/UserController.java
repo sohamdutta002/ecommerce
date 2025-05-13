@@ -1,7 +1,5 @@
 package com.ecommerce.controller;
 
-import java.util.Optional;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ecommerce.dto.UserDTO;
 import com.ecommerce.entity.User;
 import com.ecommerce.service.UserService;
 
@@ -55,8 +54,8 @@ public class UserController {
 	}
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<User> getUserProfile(@PathVariable Long id){
-		Optional<User> user=userService.getUserProfile(id);
-		return ResponseEntity.ok(user.get());
+	public ResponseEntity<UserDTO> getUserProfile(@PathVariable Long id){
+		UserDTO userDTO=userService.getUserProfile(id);
+		return ResponseEntity.ok(userDTO);
 	}
 }

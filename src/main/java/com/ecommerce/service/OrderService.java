@@ -1,15 +1,15 @@
 package com.ecommerce.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.ecommerce.dto.CartItemDTO;
 import com.ecommerce.dto.OrderDTO;
+import com.ecommerce.dto.OrderItemDTO;
 import com.ecommerce.entity.CartItem;
 import com.ecommerce.entity.Order;
+import com.ecommerce.entity.OrderItem;
 import com.ecommerce.entity.User;
 import com.ecommerce.repository.CartItemRepository;
 import com.ecommerce.repository.OrderRepository;
@@ -29,34 +29,43 @@ public class OrderService {
 	}
 
 	public OrderDTO placeOrder(Long userId) {
-		User user = userRepository.findById(userId).orElseThrow();
+		User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
 		List<CartItem> cartItems = cartItemRepository.findByUser(user);
 		if (cartItems.isEmpty()) {
 			throw new RuntimeException("Cart is empty");
 		}
-		double total = cartItems.stream().mapToDouble(item -> item.getTotalPrice()).sum();
 
 		Order order = new Order();
 		order.setUser(user);
-		order.setOrderItems(new ArrayList<>(cartItems));
-		order.setTotalPrice(total);
+
+		List<OrderItem> orderItems = cartItems.stream().map(ci -> {
+			OrderItem oi = new OrderItem();
+			oi.setProduct(ci.getProduct());
+			oi.setProductName(ci.getProduct().getName());
+			oi.setProductPrice(ci.getProduct().getPrice());
+			oi.setQuantity(ci.getQuantity());
+			oi.setTotalPrice(ci.getTotalPrice());
+			oi.setOrder(order);
+			return oi;
+		}).collect(Collectors.toList());
+
+		order.setOrderItems(orderItems);
+		order.setTotalPrice(orderItems.stream().mapToDouble(OrderItem::getTotalPrice).sum());
 		order.setShippingAddress(user.getShippingAddress());
 		order.setOrderStatus("Pending");
-		order.setPaymentStatus("Pending");
+		order.setPaymentStatus("UNPAID");
 		Order savedOrder = orderRepository.save(order);
 		cartItemRepository.deleteAll(cartItems);
 		return convertToOrderDTO(savedOrder);
 	}
 
 	public OrderDTO convertToOrderDTO(Order order) {
-		List<CartItemDTO> cartItemDTOs = order.getOrderItems().stream()
-				.map(cartItem -> new CartItemDTO(cartItem.getCartItemId(), cartItem.getUser().getUserId(),
-						cartItem.getProduct().getProductId(), cartItem.getProduct().getName(), cartItem.getQuantity(),
-						cartItem.getTotalPrice()))
-				.collect(Collectors.toList());
-		return new OrderDTO(order.getOrderId(), order.getOrderDate(), order.getTotalPrice(), order.getShippingAddress(),
-				order.getOrderStatus(), order.getPaymentStatus(), order.getUser().getUserId(),
-				order.getUser().getName(), cartItemDTOs);
+		List<OrderItemDTO> item=order.getOrderItems().stream().map(oi->new OrderItemDTO(
+					oi.getOrderItemId(),oi.getProductName(),oi.getProductPrice(),oi.getQuantity(),oi.getTotalPrice()
+				)).collect(Collectors.toList());
+		return new OrderDTO(order.getOrderId(), order.getOrderDate(), order.getTotalPrice(),
+				order.getOrderStatus(), order.getShippingAddress(), order.getPaymentStatus(),
+				item);
 	}
 
 	public List<OrderDTO> getOrdersByUser(Long userId) {
@@ -74,6 +83,7 @@ public class OrderService {
 
 	public OrderDTO updatePaymentStatus(Long orderId, String status) {
 		Order order = orderRepository.findById(orderId).orElseThrow(() -> new RuntimeException("Order not found"));
+		order.setPaymentStatus(status);
 		return convertToOrderDTO(orderRepository.save(order));
 	}
 }

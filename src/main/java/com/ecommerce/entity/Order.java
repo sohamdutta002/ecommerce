@@ -27,7 +27,7 @@ public class Order {
 	@ManyToOne
 	@JoinColumn(name = "userId")
 	private User user;
-	@OneToMany(cascade=CascadeType.ALL)
+	@OneToMany(mappedBy="order",cascade=CascadeType.ALL)
 	private List<OrderItem> orderItems=new ArrayList<>();
 	private double totalPrice;
 	private String shippingAddress;
@@ -38,6 +38,7 @@ public class Order {
 	@PrePersist
 	@PreUpdate
 	void update() {
+		totalPrice=0;
 		for(OrderItem oi:orderItems) {
 			totalPrice+=oi.getTotalPrice();
 		}

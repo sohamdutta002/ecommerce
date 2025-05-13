@@ -15,8 +15,8 @@ public class OrderDTO {
 	private String orderStatus;
 	private String shippingAddress;
 	private String paymentStatus;
-	private Long userId;
-	private String userName;
-	private List<CartItemDTO> orderItems;
+//	private Long userId;
+//	private String userName;
+	private List<OrderItemDTO> orderItems;
 	
 }
