@@ -11,7 +11,7 @@ import lombok.Data;
 @Entity
 public class Admin {
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long adminId;
 	@Column(unique=true)
 	private String email;

@@ -13,7 +13,7 @@ import lombok.Data;
 @Entity
 public class OrderItem {
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	private long orderItemId;
 	@ManyToOne
 	private Product product;
