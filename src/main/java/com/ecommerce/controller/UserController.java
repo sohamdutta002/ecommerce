@@ -18,44 +18,45 @@ import com.ecommerce.service.UserService;
 @RequestMapping("/api/user")
 public class UserController {
 	private final UserService userService;
-	
+
 	public UserController(UserService userService) {
-		this.userService=userService;
+		this.userService = userService;
 	}
-	
+
 	@PostMapping("/register")
-	public ResponseEntity<String> registerUser(@RequestBody User user){
+	public ResponseEntity<String> registerUser(@RequestBody User user) {
 		try {
 			userService.registerUser(user);
 			return ResponseEntity.status(HttpStatus.CREATED).body("User registered successfully");
-		}catch(Exception e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Registration failed: "+e.getMessage());
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Registration failed: " + e.getMessage());
 		}
 	}
-	
+
 	@PostMapping("/login")
-	public ResponseEntity<String> loginUser(@RequestBody User user){
+	public ResponseEntity<String> loginUser(@RequestBody User user) {
 		try {
 			userService.loginUser(user.getEmail(), user.getPassword());
 			return ResponseEntity.ok("User login successful");
-		} catch(Exception e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Login failed: "+e.getMessage());
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Login failed: " + e.getMessage());
 		}
 	}
-	
+
 	@PutMapping("/update-user")
-	public ResponseEntity<User> updateUserDetails(@RequestBody User updatedUser){
+	public ResponseEntity<User> updateUserDetails(@RequestBody User updatedUser) {
 		try {
-			User user=userService.updateUserProfile(updatedUser.getUserId(), updatedUser);
+			User user = userService.updateUserProfile(updatedUser.getId(), updatedUser);
 			return ResponseEntity.ok(user);
-		} catch(Exception e) {
+		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		}
 	}
-	
+
 	@GetMapping("/{id}")
-	public ResponseEntity<UserDTO> getUserProfile(@PathVariable Long id){
-		UserDTO userDTO=userService.getUserProfile(id);
+	public ResponseEntity<UserDTO> getUserProfile(@PathVariable Long id) {
+		UserDTO userDTO = userService.getUserProfile(id);
 		return ResponseEntity.ok(userDTO);
 	}
+
 }

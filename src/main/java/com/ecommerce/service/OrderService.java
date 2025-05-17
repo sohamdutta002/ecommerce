@@ -86,4 +86,13 @@ public class OrderService {
 		order.setPaymentStatus(status);
 		return convertToOrderDTO(orderRepository.save(order));
 	}
+	
+	public List<OrderDTO> viewAllOrders(){
+		try{
+			List<OrderDTO> orders=orderRepository.findAll().stream().map(this::convertToOrderDTO).collect(Collectors.toList());
+			return orders;
+		}	catch(Exception e) {
+			throw new RuntimeException(e.getMessage());
+		}
+	}
 }

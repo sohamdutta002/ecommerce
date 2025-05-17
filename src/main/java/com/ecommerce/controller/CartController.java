@@ -28,7 +28,7 @@ public class CartController {
 	@PostMapping("/add")
 	public ResponseEntity<CartItemDTO> addToCart(@RequestBody CartItem cartItem){
 		try {
-			CartItemDTO savedCartItem=cartService.addToCart(cartItem.getUser().getUserId(), cartItem.getProduct().getProductId(), cartItem.getQuantity());
+			CartItemDTO savedCartItem=cartService.addToCart(cartItem.getUser().getId(), cartItem.getProduct().getProductId(), cartItem.getQuantity());
 			return ResponseEntity.ok(savedCartItem);
 		}catch(Exception e) {
 			return ResponseEntity.badRequest().build();

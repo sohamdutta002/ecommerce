@@ -30,14 +30,16 @@ public class CartService {
 
 	public CartItemDTO addToCart(Long userId, Long productId, int quantity) {
 		User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
-		Product product = productRepository.findById(productId).orElseThrow(() -> new RuntimeException("Product does not exist"));
+		Product product = productRepository.findById(productId)
+				.orElseThrow(() -> new RuntimeException("Product does not exist"));
 		CartItem cartItem = cartItemRepository.findByUserAndProduct(user, product).orElse(new CartItem());
 
 		cartItem.setProduct(product);
 		cartItem.setUser(user);
-		cartItem.setQuantity(cartItem.getQuantity() + quantity);
+		cartItem.setQuantity(quantity);
 		cartItemRepository.save(cartItem);
-		return new CartItemDTO(productId,product.getName(),product.getPrice(),quantity,product.getPrice()*quantity);
+		return new CartItemDTO(productId, product.getName(), product.getPrice(), quantity,
+				product.getPrice() * quantity);
 	}
 
 	public void removeFromCart(Long userId, Long productId) {
@@ -53,18 +55,23 @@ public class CartService {
 		User user = userRepository.findById(userId).orElseThrow();
 		List<CartItem> cartItems = cartItemRepository.findByUser(user);
 		double total = cartItems.stream().mapToDouble(ci -> ci.getProduct().getPrice() * ci.getQuantity()).sum();
-		
-		List<CartItemDTO> itemDTOs=cartItems.stream()
-				.map(item->new CartItemDTO(
-						item.getProduct().getProductId(),
-						item.getProduct().getName(),
-						item.getProduct().getPrice(),
-						item.getQuantity(),
-						item.getProduct().getPrice()*item.getQuantity()
-				)).collect(Collectors.toList());
+
+		List<CartItemDTO> itemDTOs = cartItems.stream()
+				.map(item -> new CartItemDTO(item.getProduct().getProductId(), item.getProduct().getName(),
+						item.getProduct().getPrice(), item.getQuantity(),
+						item.getProduct().getPrice() * item.getQuantity()))
+				.collect(Collectors.toList());
 		Map<String, Object> response = new HashMap<>();
 		response.put("items", itemDTOs);
 		response.put("totalPrice", total);
 		return response;
+	}
+
+	public List<CartItemDTO> viewAllCarts() {
+		return cartItemRepository.findAll().stream()
+				.map(item -> new CartItemDTO(item.getProduct().getProductId(), item.getProduct().getName(),
+						item.getProduct().getPrice(), item.getQuantity(),
+						item.getProduct().getPrice() * item.getQuantity()))
+				.collect(Collectors.toList());
 	}
 }
