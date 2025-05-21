@@ -2,6 +2,8 @@ package com.ecommerce.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,15 +14,20 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ecommerce.dto.UserDTO;
 import com.ecommerce.entity.User;
+import com.ecommerce.service.JwtService;
 import com.ecommerce.service.UserService;
 
 @RestController
 @RequestMapping("/api/user")
 public class UserController {
 	private final UserService userService;
+	private AuthenticationManager authenticationManager;
+	private JwtService jwtService;
 
-	public UserController(UserService userService) {
+	public UserController(UserService userService,AuthenticationManager authenticationManager,JwtService jwtService) {
 		this.userService = userService;
+		this.authenticationManager = authenticationManager;
+		this.jwtService=jwtService;
 	}
 
 	@PostMapping("/register")
@@ -36,8 +43,8 @@ public class UserController {
 	@PostMapping("/login")
 	public ResponseEntity<String> loginUser(@RequestBody User user) {
 		try {
-			userService.loginUser(user.getEmail(), user.getPassword());
-			return ResponseEntity.ok("User login successful");
+			authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(),user.getPassword()));
+			return ResponseEntity.ok(jwtService.generateToken(user));
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Login failed: " + e.getMessage());
 		}
