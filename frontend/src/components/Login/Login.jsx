@@ -1,0 +1,19 @@
+import React from 'react'
+
+const Login = () => {
+    return (
+        <div className='flex bg-gray-100 h-[100vh] w-[100vw] justify-center items-center md:text-2xl'>
+            <div className="rounded-2xl border-2 border-gray-400 p-4 md:p-8 shadow-md shadow-gray-500">
+                <h2 className='text-2xl md:text-4xl md:mb-6 text-center font-bold'>Login</h2>
+                <form className='flex flex-col p-2 gap-2 md:gap-6'>
+                    <input type='text' placeholder='Username' className='border-2 border-gray-400 rounded-md p-2' />
+                    <input type='password' placeholder='Password' className='border-2 border-gray-400 rounded-md p-2' />
+                    <button className='bg-blue-500 text-white rounded-md p-2 md:p-3 hover:bg-blue-400 cursor-pointer'>Login</button>
+                </form>
+                <p className='text-center text-sm md:text-lg'>Don't have an account? <a href='/signup' className='text-blue-500 hover:text-blue-400'>Register</a></p>
+            </div>
+        </div>
+    )
+}
+
+export default Login
