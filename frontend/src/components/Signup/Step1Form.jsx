@@ -12,7 +12,7 @@ const Step1Form = ({ formData, handleChange, nextStep, handleSubmit }) => {
     const checkDetails = () => {
         return formData.name !== '' && formData.email !== '' && checkPassword()
     }
-    let role = 'user'
+    let role = 'USER'
     return (
         <form className='flex flex-col gap-4'>
             <div className="flex flex-col gap-2">
