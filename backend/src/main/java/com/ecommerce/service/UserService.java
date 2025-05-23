@@ -35,10 +35,10 @@ public class UserService {
 		newUser.setPassword(encoder.encode(newUser.getPassword()));
 		return userRepository.save(newUser);
 	}
-	
+
 	public String registerAdmin(User newUser) {
-		Optional<User> existingUser=userRepository.findByEmail(newUser.getEmail());
-		if(existingUser.isPresent()) {
+		Optional<User> existingUser = userRepository.findByEmail(newUser.getEmail());
+		if (existingUser.isPresent()) {
 			throw new RuntimeException("Admin with this email already exists");
 		}
 		newUser.setRole(Role.ADMIN);
@@ -49,7 +49,7 @@ public class UserService {
 
 	public boolean loginUser(String email, String password) {
 		Optional<User> user = userRepository.findByEmail(email);
-		password=encoder.encode(password);
+		password = encoder.encode(password);
 		if (user.isPresent() && user.get().getPassword().equals(password)) {
 			return true;
 		}
@@ -93,14 +93,32 @@ public class UserService {
 								oi.getQuantity(), oi.getTotalPrice()))
 						.collect(Collectors.toList())))
 				.collect(Collectors.toList());
-		return new UserDTO(user.getId(), user.getName(), user.getEmail(), user.getPassword(), user.getShippingAddress(),
-				user.getPaymentDetails(), cartItems, orders);
+		return new UserDTO(user.getId(), user.getName(), user.getEmail(), user.getPassword(), user.getRole(),
+				user.getShippingAddress(), user.getPaymentDetails(), cartItems, orders);
+	}
+
+	public UserDTO getUserByEmail(String email) {
+		User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+		List<CartItemDTO> cartItems = user.getCartItems().stream()
+				.map(item -> new CartItemDTO(item.getProduct().getProductId(), item.getProduct().getName(),
+						item.getProduct().getPrice(), item.getQuantity(), item.getTotalPrice()))
+				.collect(Collectors.toList());
+		List<OrderDTO> orders = user.getOrders().stream().map(item -> new OrderDTO(item.getOrderId(),
+				item.getOrderDate(), item.getTotalPrice(), item.getOrderStatus(), item.getShippingAddress(),
+				item.getPaymentStatus(),
+				item.getOrderItems().stream()
+						.map(oi -> new OrderItemDTO(oi.getOrderItemId(), oi.getProductName(), oi.getProductPrice(),
+								oi.getQuantity(), oi.getTotalPrice()))
+						.collect(Collectors.toList())))
+				.collect(Collectors.toList());
+		return new UserDTO(user.getId(), user.getName(), user.getEmail(), user.getPassword(), user.getRole(),
+				user.getShippingAddress(), user.getPaymentDetails(), cartItems, orders);
 	}
 
 	public List<UserDTO> getAllUsers() {
-		List<UserDTO> users = userRepository
-				.findAll().stream().filter(user->user.getRole().equals(Role.USER)).map(user -> new UserDTO(user.getId(), user.getName(), user.getEmail(),
-						user.getPassword(), user.getShippingAddress(), user.getPaymentDetails(), null, null))
+		List<UserDTO> users = userRepository.findAll().stream().filter(user -> user.getRole().equals(Role.USER))
+				.map(user -> new UserDTO(user.getId(), user.getName(), user.getEmail(), user.getPassword(),
+						user.getRole(), user.getShippingAddress(), user.getPaymentDetails(), null, null))
 				.collect(Collectors.toList());
 
 		return users;
@@ -108,9 +126,9 @@ public class UserService {
 	}
 
 	public List<UserDTO> getAllAdmins() {
-		List<UserDTO> admins = userRepository
-				.findAll().stream().filter(user -> user.getRole().equals(Role.ADMIN)).map(user -> new UserDTO(user.getId(),
-						user.getName(), user.getEmail(), user.getPassword(), null, null, null, null))
+		List<UserDTO> admins = userRepository.findAll().stream().filter(user -> user.getRole().equals(Role.ADMIN))
+				.map(user -> new UserDTO(user.getId(), user.getName(), user.getEmail(), user.getPassword(),
+						user.getRole(), null, null, null, null))
 				.collect(Collectors.toList());
 		return admins;
 	}
