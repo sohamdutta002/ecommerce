@@ -4,6 +4,7 @@ import './App.css'
 import SignupPage from './pages/SignupPage'
 import LoginPage from './pages/LoginPage'
 import { Route, Router, Routes } from 'react-router-dom'
+import Hello from './components/Hello'
 
 function App() {
 
@@ -12,6 +13,7 @@ function App() {
     <Routes>
       <Route path="/signup" element={<SignupPage />} />
       <Route path="/login" element={<LoginPage />} />
+      <Route path='/hello' element={<Hello/>} />
     </Routes>
 
   )
