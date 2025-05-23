@@ -9,7 +9,7 @@ const Login = () => {
     const [user, setUser] = useState({
         email: '',
         password: '',
-        role:'USER'
+        role: 'USER'
     });
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -23,12 +23,13 @@ const Login = () => {
             dispatch({
                 type: "LOGIN",
                 payload: {
-                    // user:response.user,
-                    token: response,
+                    user: response.user,
+                    token: response.token,
                 }
             });
-            // console.log(response);
-            sessionStorage.setItem("token", response.token);
+            // console.log(response.user);
+            localStorage.setItem("token", response.token);
+            localStorage.setItem("user", JSON.stringify(response.user));
             navigate("/hello");
         } catch (e) {
             console.log("Login failed", e);
