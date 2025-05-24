@@ -25,11 +25,13 @@ const Login = () => {
                 payload: {
                     user: response.user,
                     token: response.token,
+                    role: response.role,
                 }
             });
             // console.log(response.user);
             localStorage.setItem("token", response.token);
             localStorage.setItem("user", JSON.stringify(response.user));
+            localStorage.setItem("role",response.role);
             navigate("/hello");
         } catch (e) {
             console.log("Login failed", e);
