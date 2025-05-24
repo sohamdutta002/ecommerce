@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,13 +17,13 @@ import com.ecommerce.entity.Product;
 import com.ecommerce.service.ProductService;
 
 @RestController
-@RequestMapping("/admin/products")
-@PreAuthorize("hasRole('Admin')")
-public class AdminProductController {
+@RequestMapping("/api/products")
+//@PreAuthorize("hasRole('Admin')")
+public class ProductController {
 
 	private ProductService productService;
 	
-	AdminProductController(ProductService productService){
+	ProductController(ProductService productService){
 		this.productService=productService; 
 	}
 
