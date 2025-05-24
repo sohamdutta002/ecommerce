@@ -19,7 +19,7 @@ const Login = () => {
         e.preventDefault();
         try {
             // console.log(user);
-            const response = await usePostReq("user/login", user);
+            const response = await usePostReq("api/user/login", user);
             dispatch({
                 type: "LOGIN",
                 payload: {
