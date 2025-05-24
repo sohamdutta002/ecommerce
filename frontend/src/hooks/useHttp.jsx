@@ -1,9 +1,9 @@
-const BASE_URL = "http://localhost:8080/api";
+const BASE_URL = "http://localhost:8080";
 
 
 export const usePostReq=async (url,body,token)=>{
     try{
-        console.log(body);
+        // console.log(body);
         const response=await fetch(`${BASE_URL}/${url}`,{
             method: "POST",
             body: JSON.stringify(body),
