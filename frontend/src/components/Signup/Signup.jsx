@@ -1,6 +1,7 @@
-import React,{useState} from 'react'
+import React, { useState } from 'react'
 import Step1Form from './Step1Form';
 import Step2Form from './Step2Form';
+import { useGetReq, usePostReq } from '../../hooks/useHttp';
 
 const Signup = () => {
   const [step, setStep] = useState(1);
@@ -18,8 +19,30 @@ const Signup = () => {
   };
   const nextStep = () => setStep(step + 1);
   const prevStep = () => setStep(step - 1);
-  const handleSubmit=(e)=>{
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    try {
+      const { confirmPassword, ...filteredFormData } = formData;
+      const response = await usePostReq("user/register", filteredFormData);
+      if (!response.ok) {
+        throw new Error(response);
+      }
+      dispatch({
+        type: 'LOGIN',
+        payload: {
+          user: response.user,
+          token: response.token,
+          role: response.role,
+        }
+      });
+      localStorage.setItem("token", response.token);
+      localStorage.setItem("user", JSON.stringify(response.user));
+      localStorage.setItem("role", response.role);
+      const data = response.json();
+      return data;
+    } catch (e) {
+      throw new Error(e.message);
+    }
   }
   return (
     <div className='flex bg-gray-100 h-[100vh] w-[100vw] justify-center items-center md:text-2xl'>

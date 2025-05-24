@@ -33,8 +33,8 @@ const Step1Form = ({ formData, handleChange, nextStep, handleSubmit }) => {
             </div>
 
             {!checkPassword() && formData.confirmPassword && (<p className='text-red-500 text-sm'>Passwords do not match</p>)}
-            {role === 'user' && <button onClick={nextStep} disabled={!checkDetails()} className={`rounded-md font-medium p-2 md:p-3 ${checkDetails() ? 'bg-blue-500 text-white hover:bg-blue-400 cursor-pointer' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}>Next</button>}
-            {role === 'admin' && <button onClick={handleSubmit} disabled={!checkDetails()} className={`rounded-md font-medium p-2 md:p-3 ${checkDetails() ? 'bg-green-500 text-white hover:bg-green-400 cursor-pointer' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}>Submit</button>}
+            {role === 'USER' && <button onClick={nextStep} disabled={!checkDetails()} className={`rounded-md font-medium p-2 md:p-3 ${checkDetails() ? 'bg-blue-500 text-white hover:bg-blue-400 cursor-pointer' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}>Next</button>}
+            {role === 'ADMIN' && <button onClick={handleSubmit} disabled={!checkDetails()} className={`rounded-md font-medium p-2 md:p-3 ${checkDetails() ? 'bg-green-500 text-white hover:bg-green-400 cursor-pointer' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}>Submit</button>}
         </form>
     )
 }
