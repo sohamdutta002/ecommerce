@@ -4,9 +4,10 @@ import './App.css'
 import SignupPage from './pages/SignupPage'
 import LoginPage from './pages/LoginPage'
 import { Route, Router, Routes } from 'react-router-dom'
-import Hello from './components/Hello'
 import PublicLayout from './layouts/PublicLayout'
 import PrivateLayout from './layouts/PrivateLayout'
+import ProductList from './components/Product/ProductList'
+import ProductDetail from './components/Product/ProductDetail'
 
 function App() {
 
@@ -20,7 +21,8 @@ function App() {
       </Route>
       {/* Private Layout */}
       <Route element={<PrivateLayout />}>
-        <Route path='/hello' element={<Hello />} />
+        <Route path='/' element={<ProductList />} />
+        <Route path='/:productId' element={<ProductDetail />} />
       </Route>
     </Routes>
 

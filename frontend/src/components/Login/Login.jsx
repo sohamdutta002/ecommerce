@@ -32,7 +32,7 @@ const Login = () => {
             localStorage.setItem("token", response.token);
             localStorage.setItem("user", JSON.stringify(response.user));
             localStorage.setItem("role",response.role);
-            navigate("/hello");
+            navigate("/");
         } catch (e) {
             console.log("Login failed", e);
         }
