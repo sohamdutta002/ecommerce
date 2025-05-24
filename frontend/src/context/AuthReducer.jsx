@@ -1,4 +1,4 @@
-const savedUser = JSON.parse(localStorage.getItem("user"));
+const savedUser = localStorage.getItem("user")?JSON.parse(localStorage.getItem("user")):null;
 const savedToken = localStorage.getItem("token");
 const savedRole = localStorage.getItem("role");
 export const initialAuthState = {
