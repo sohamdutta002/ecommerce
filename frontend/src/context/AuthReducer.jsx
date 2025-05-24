@@ -1,10 +1,11 @@
 const savedUser = JSON.parse(localStorage.getItem("user"));
 const savedToken = localStorage.getItem("token");
-
+const savedRole = localStorage.getItem("role");
 export const initialAuthState = {
     isAuthenticated: !!savedUser,
     user: savedUser || null,
     token: savedToken || null,
+    role: savedRole || null,
 };
 
 export const authReducer = (state, action) => {
@@ -14,6 +15,7 @@ export const authReducer = (state, action) => {
                 isAuthenticated: true,
                 user: action.payload.user,
                 token: action.payload.token,
+                role: action.payload.role,
             };
             // console.log(newState);
             return newState;
@@ -22,6 +24,7 @@ export const authReducer = (state, action) => {
                 isAuthenticated: false,
                 user: null,
                 token: null,
+                role: null,
             };
         default:
             return state;
