@@ -34,12 +34,13 @@ public class UserController {
 	}
 
 	@PostMapping("/register")
-	public ResponseEntity<String> registerUser(@RequestBody User user) {
+	public ResponseEntity<AuthResponse> registerUser(@RequestBody User user) {
 		try {
 			userService.registerUser(user);
-			return ResponseEntity.status(HttpStatus.CREATED).body("User registered successfully");
+			System.out.println(user);
+			return loginUser(user);
 		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Registration failed: " + e.getMessage());
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
 		}
 	}
 
